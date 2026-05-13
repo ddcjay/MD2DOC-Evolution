@@ -7,9 +7,10 @@ const packageJson = JSON.parse(readFileSync('./package.json', 'utf-8'));
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
+    const isDesktop = mode === 'desktop';
     return {
       // 改用相對路徑，增加部署靈活性
-      base: '/MD2DOC-Evolution/',
+      base: isDesktop ? './' : '/MD2DOC-Evolution/',
       server: {
         port: 3000,
         host: '0.0.0.0',
@@ -21,6 +22,7 @@ export default defineConfig(({ mode }) => {
         __APP_VERSION__: JSON.stringify(packageJson.version),
       },
       build: {
+        manifest: !isDesktop,
         chunkSizeWarningLimit: 1000, // 提高警告門檻至 1MB
         rollupOptions: {
           output: {

@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Generated desktop/package outputs
+release/
+release-exe/
+electron/
+MD2DOC-Lite/src-tauri/target/
+MD2DOC-Lite/dist/
+MD2DOC-Lite/node_modules/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

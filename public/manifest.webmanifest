@@ -1,0 +1,36 @@
+{
+  "name": "MD2DOC-Evolution",
+  "short_name": "MD2DOC",
+  "description": "Convert Markdown manuscripts into formatted Word documents.",
+  "start_url": "/MD2DOC-Evolution/",
+  "scope": "/MD2DOC-Evolution/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5",
+  "categories": ["productivity", "utilities", "writing"],
+  "lang": "zh-TW",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Writing",
+      "short_name": "Write",
+      "description": "Open the Markdown editor.",
+      "url": "/MD2DOC-Evolution/",
+      "icons": [
+        {
+          "src": "logo.svg",
+          "sizes": "512x512",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}

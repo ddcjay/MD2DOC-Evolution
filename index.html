@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZXT99R0JE3"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-ZXT99R0JE3');
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
@@ -55,39 +46,19 @@
     }
     </script>
     
-    <!-- GoatCounter -->
-    <script data-goatcounter="https://eric861129.goatcounter.com/count"
-            async src="//gc.zgo.at/count.js"></script>
-
     <link rel="icon" type="image/svg+xml" href="./logo.svg" />
+    <link rel="apple-touch-icon" href="./logo.svg" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MD2DOC" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>MD2DOC-Evolution | Markdown to Word Converter | 專業技術書稿轉檔</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-primary': 'var(--brand-primary)',
-                        'product-primary': 'var(--product-primary)',
-                        'product-hover': 'var(--product-hover)',
-                        'product-glow': 'var(--product-glow)',
-                        'bg-base': 'var(--bg-base)',
-                        'text-high': 'var(--text-high)',
-                    }
-                }
-            }
-        }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/buffer/6.0.3/buffer.min.js"></script>
     <script>
         // 關鍵：將 Buffer 掛載到全局，docx 庫才能運作
         // 修正：檢查 window.buffer 是否存在，避免直接引用導致 ReferenceError
-        if (window.buffer) {
-            window.Buffer = window.Buffer || window.buffer.Buffer;
-        }
         // 確保 process.env 存在，避免 Gemini SDK 報錯
-        window.process = window.process || { env: { API_KEY: "" } };
     </script>
 </head>
 <body class="manuscript-font">

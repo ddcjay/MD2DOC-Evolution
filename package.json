@@ -7,12 +7,45 @@
     "url": "https://github.com/eric861129/MD2DOC-Evolution.git"
   },
   "type": "module",
+  "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:desktop": "vite build --mode desktop",
+    "preview": "vite preview",
+    "electron:dev": "electron .",
+    "package:win": "npm run build:desktop && electron-builder --win dir",
+    "package:win:portable": "npm run build:desktop && electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.erichuang.md2doc-evolution",
+    "productName": "MD2DOC-Evolution",
+    "asar": false,
+    "directories": {
+      "output": "release-exe"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "MD2DOC-Evolution-${version}-portable.exe"
+    }
   },
   "dependencies": {
+    "buffer": "^6.0.3",
     "docx": "^9.5.1",
     "file-saver": "^2.0.5",
     "i18next": "^25.7.3",
@@ -33,7 +66,12 @@
     "@types/node": "^22.14.0",
     "@types/qrcode": "^1.5.6",
     "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.5.0",
+    "electron": "^42.0.1",
+    "electron-builder": "^26.8.1",
     "jsdom": "^27.4.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.4.19",
     "typescript": "~5.8.2",
     "vite": "^6.2.0",
     "vitest": "^4.0.16"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sub-agent Orchestrator"
+  short_description: "Plan safe, non-overlapping sub-agent delegation."
+  default_prompt: "Use $sub-agent-orchestrator to split a coding task across sub-agents safely."

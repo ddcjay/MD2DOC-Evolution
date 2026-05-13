@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#4f46e5" />
+  <title>MD2DOC-Evolution Offline</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    main {
+      width: min(100%, 460px);
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 28px;
+      background: #ffffff;
+      box-shadow: 0 24px 60px rgb(15 23 42 / 0.12);
+    }
+
+    img {
+      width: 64px;
+      height: 64px;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 18px;
+      background: #4f46e5;
+      color: white;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        background: #020617;
+        color: #f8fafc;
+      }
+
+      main {
+        background: #0f172a;
+        border-color: #334155;
+      }
+
+      p {
+        color: #cbd5e1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="./logo.svg" alt="" />
+    <h1>目前離線</h1>
+    <p>MD2DOC-Evolution 已經安裝在這台裝置上。請重新連線後再整理或匯出需要下載外部資源的內容。</p>
+    <button type="button" onclick="window.location.reload()">重新整理</button>
+  </main>
+</body>
+</html>
