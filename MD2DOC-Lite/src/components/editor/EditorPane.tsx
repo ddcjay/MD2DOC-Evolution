@@ -25,7 +25,7 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
   textareaRef,
   onScroll
 }) => {
-  const { registerImage } = useEditor();
+  const { registerImage, openMarkdownFile, loadMarkdownContent, sourceFileName } = useEditor();
   
   const {
     isOpen,
@@ -69,8 +69,51 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
     setContent(e.target.value);
   };
 
-  const handleDrop = async (e: React.DragEvent<HTMLTextAreaElement>) => {
+  React.useEffect(() => {
+    if (!('__TAURI_INTERNALS__' in window)) return;
+
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+
+    const listenForDroppedMarkdown = async () => {
+      try {
+        const [{ getCurrentWebview }, { invoke }] = await Promise.all([
+          import('@tauri-apps/api/webview'),
+          import('@tauri-apps/api/core')
+        ]);
+
+        unlisten = await getCurrentWebview().onDragDropEvent(async (event) => {
+          if (event.payload.type !== 'drop') return;
+
+          const paths = 'paths' in event.payload ? event.payload.paths : [];
+          const mdPath = paths.find(isMarkdownPath);
+          if (!mdPath) return;
+
+          try {
+            const document = await invoke<{ fileName: string; content: string }>('read_markdown_file', { path: mdPath });
+            if (!disposed) {
+              loadMarkdownContent(document.fileName, document.content, mdPath);
+            }
+          } catch (error) {
+            console.error('Unable to open dropped Markdown file:', error);
+          }
+        });
+      } catch (error) {
+        console.error('Unable to register native file drop handler:', error);
+      }
+    };
+
+    listenForDroppedMarkdown();
+
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [loadMarkdownContent]);
+
+  const handleDrop = async (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     const files = Array.from(e.dataTransfer.files);
     
     // 1. Handle Markdown files (.md)
@@ -81,12 +124,7 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
     );
 
     if (mdFile) {
-      const text = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsText(mdFile);
-      });
-      setContent(text);
+      await openMarkdownFile(mdFile);
       return;
     }
 
@@ -95,9 +133,9 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
 
     if (imageFiles.length === 0) return;
 
-    const target = e.target as HTMLTextAreaElement;
-    const start = target.selectionStart;
-    const end = target.selectionEnd;
+    const target = textareaRef.current;
+    const start = target?.selectionStart ?? content.length;
+    const end = target?.selectionEnd ?? content.length;
 
     let insertedText = '';
     
@@ -119,15 +157,22 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
     setContent(newContent);
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLTextAreaElement>) => {
+  const handleDragOver = (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = 'copy';
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-white dark:bg-slate-900 transition-colors relative">
+    <div
+      className="w-full h-full flex flex-col bg-white dark:bg-slate-900 transition-colors relative"
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+    >
       <div className="bg-slate-50 dark:bg-slate-800/50 px-6 py-2 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-        <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Manuscript Editor (Draft)</span>
+        <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+          {sourceFileName ? `Editing ${sourceFileName}` : 'Manuscript Editor (Draft)'}
+        </span>
         <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
            {wordCount} Words
         </span>
@@ -158,3 +203,7 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
     </div>
   );
 };
+
+function isMarkdownPath(path: string) {
+  return /\.(md|markdown|mdown)$/i.test(path);
+}

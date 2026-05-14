@@ -14,12 +14,42 @@ import { UI_THEME } from '../../constants/theme';
 interface PreviewPaneProps {
   parsedBlocks: ParsedBlock[];
   previewRef: React.RefObject<HTMLDivElement | null>;
+  onScroll: () => void;
+  onBlockActivate: (startIndex: number) => void;
 }
 
 export const PreviewPane: React.FC<PreviewPaneProps> = ({
   parsedBlocks,
-  previewRef
+  previewRef,
+  onScroll,
+  onBlockActivate
 }) => {
+  const activateBlock = (block: ParsedBlock) => {
+    if (typeof block.startIndex === 'number') {
+      onBlockActivate(block.startIndex);
+    }
+  };
+
+  const wrapBlock = (element: JSX.Element, block: ParsedBlock, key: React.Key) => (
+    <div
+      key={key}
+      className="preview-source-block rounded-sm outline-none transition-colors hover:bg-slate-50/80 focus-visible:ring-2 focus-visible:ring-product"
+      role="button"
+      tabIndex={0}
+      title="定位到左側原文"
+      data-source-index={block.startIndex}
+      onClick={() => activateBlock(block)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          activateBlock(block);
+        }
+      }}
+    >
+      {element}
+    </div>
+  );
+
   const renderPreviewContent = () => {
     const elements: JSX.Element[] = [];
     let i = 0;
@@ -38,7 +68,17 @@ export const PreviewPane: React.FC<PreviewPaneProps> = ({
               <li 
                 key={idx} 
                 style={{ marginLeft: `${(item.nestingLevel || 0) * 1.5}rem` }}
-                className="relative mb-2 pl-4 leading-[1.8] list-none before:content-[''] before:absolute before:left-0 before:top-[0.7em] before:w-2 before:h-2 before:bg-slate-400 dark:before:bg-slate-600 before:rounded-full"
+                className="relative mb-2 pl-4 leading-[1.8] list-none rounded-sm cursor-pointer outline-none before:content-[''] before:absolute before:left-0 before:top-[0.7em] before:w-2 before:h-2 before:bg-slate-400 dark:before:bg-slate-600 before:rounded-full hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-product"
+                role="button"
+                tabIndex={0}
+                title="定位到左側原文"
+                onClick={() => activateBlock(item)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    activateBlock(item);
+                  }
+                }}
               >
                  <RenderRichText text={item.content} />
               </li>
@@ -57,7 +97,17 @@ export const PreviewPane: React.FC<PreviewPaneProps> = ({
               <li 
                 key={idx} 
                 style={{ marginLeft: `${(item.nestingLevel || 0) * 1.5}rem` }}
-                className="mb-2 pl-2 leading-[1.8] text-slate-800 dark:text-slate-200"
+                className="mb-2 pl-2 leading-[1.8] text-slate-800 dark:text-slate-200 rounded-sm cursor-pointer outline-none hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-product"
+                role="button"
+                tabIndex={0}
+                title="定位到左側原文"
+                onClick={() => activateBlock(item)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    activateBlock(item);
+                  }
+                }}
               >
                  <RenderRichText text={item.content} />
               </li>
@@ -65,7 +115,7 @@ export const PreviewPane: React.FC<PreviewPaneProps> = ({
           </ol>
         );
       } else {
-        elements.push(<PreviewBlock key={i} block={block} />);
+        elements.push(wrapBlock(<PreviewBlock block={block} />, block, i));
         i++;
       }
     }
@@ -80,6 +130,7 @@ export const PreviewPane: React.FC<PreviewPaneProps> = ({
       <div 
         ref={previewRef}
         className="flex-1 overflow-y-auto p-6 lg:p-10 scroll-smooth"
+        onScroll={onScroll}
       >
         <div 
           className="max-w-4xl mx-auto bg-white dark:bg-slate-50 shadow-2xl p-10 lg:p-14 min-h-screen text-slate-900 rounded-sm border border-slate-200 dark:border-slate-700 transition-colors"

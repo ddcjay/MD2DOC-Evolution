@@ -30,6 +30,8 @@ const MarkdownEditor: React.FC = () => {
     textareaRef,
     previewRef,
     handleScroll,
+    handlePreviewScroll,
+    scrollEditorToIndex,
   } = editorState;
 
   const startResizing = React.useCallback(() => {
@@ -69,6 +71,10 @@ const MarkdownEditor: React.FC = () => {
     };
   }, [resize, stopResizing]);
 
+  React.useEffect(() => {
+    handleScroll();
+  }, [content, parsedBlocks.length, handleScroll]);
+
   return (
     <EditorProvider editorState={editorState} darkModeState={darkModeState}>
       <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 overflow-hidden transition-colors">
@@ -98,6 +104,8 @@ const MarkdownEditor: React.FC = () => {
             <PreviewPane 
               parsedBlocks={parsedBlocks}
               previewRef={previewRef}
+              onScroll={handlePreviewScroll}
+              onBlockActivate={(startIndex) => scrollEditorToIndex(startIndex, content)}
               />
           </div>
         </main>

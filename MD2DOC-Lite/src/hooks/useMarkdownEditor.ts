@@ -27,6 +27,12 @@ export const useMarkdownEditor = () => {
     documentMeta,
     imageRegistry,
     registerImage,
+    sourceFileName,
+    sourceFilePath,
+    loadMarkdownContent,
+    openMarkdownFile,
+    openMarkdownFromDialog,
+    setMarkdownSource,
     language,
     toggleLanguage,
     resetToDefault,
@@ -37,7 +43,7 @@ export const useMarkdownEditor = () => {
   const wordCount = useWordCount(content);
 
   // 3. UI Interactions (Sync Scroll)
-  const { textareaRef, previewRef, handleScroll } = useSyncScroll();
+  const { textareaRef, previewRef, handleScroll, handlePreviewScroll, scrollEditorToIndex } = useSyncScroll();
 
   // 4. Export Capabilities (DOCX, MD)
   const {
@@ -47,7 +53,15 @@ export const useMarkdownEditor = () => {
     handleDownload,
     handleExportMarkdown,
     pageSizes
-  } = useDocxExport({ content, parsedBlocks, documentMeta, imageRegistry });
+  } = useDocxExport({
+    content,
+    parsedBlocks,
+    documentMeta,
+    imageRegistry,
+    sourceFileName,
+    sourceFilePath,
+    onMarkdownSaved: setMarkdownSource,
+  });
 
   return {
     // State
@@ -57,6 +71,11 @@ export const useMarkdownEditor = () => {
     documentMeta,
     imageRegistry,
     registerImage,
+    sourceFileName,
+    sourceFilePath,
+    loadMarkdownContent,
+    openMarkdownFile,
+    openMarkdownFromDialog,
     isGenerating,
     selectedSizeIndex,
     setSelectedSizeIndex,
@@ -69,6 +88,8 @@ export const useMarkdownEditor = () => {
     
     // Actions
     handleScroll,
+    handlePreviewScroll,
+    scrollEditorToIndex,
     handleDownload,
     handleExportMarkdown,
     resetToDefault,

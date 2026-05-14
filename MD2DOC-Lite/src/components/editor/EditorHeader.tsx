@@ -4,7 +4,7 @@
  * Licensed under the MIT License.
  */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Settings2, Download, Sun, Moon, RotateCcw, Languages, FileText, Bot } from 'lucide-react';
 import { useEditor } from '../../contexts/EditorContext';
 import { Button } from '../ui/Button';
@@ -25,14 +25,33 @@ export const EditorHeader: React.FC = () => {
     t,
     isGenerating,
     parsedBlocks,
+    openMarkdownFile,
+    openMarkdownFromDialog,
+    sourceFileName,
     isDark,
     toggleDarkMode
   } = useEditor();
 
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const logoPath = `${import.meta.env.BASE_URL}logo.svg`;
   const hasContent = parsedBlocks.length > 0;
+
+  const handleOpenFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await openMarkdownFile(file);
+    }
+    event.target.value = '';
+  };
+
+  const handleOpenClick = async () => {
+    const handledByDesktop = await openMarkdownFromDialog();
+    if (!handledByDesktop) {
+      fileInputRef.current?.click();
+    }
+  };
 
   return (
     <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-4 flex justify-between items-center z-20 shadow-sm transition-colors">
@@ -103,6 +122,23 @@ export const EditorHeader: React.FC = () => {
         </div>
 
         {/* 版面尺寸選擇器 */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".md,.markdown,.mdown,.txt,text/markdown,text/x-markdown,text/plain"
+          className="hidden"
+          onChange={(event) => void handleOpenFile(event)}
+        />
+
+        <Button
+          onClick={() => void handleOpenClick()}
+          variant="secondary"
+          title={sourceFileName ? `目前檔案：${sourceFileName}` : '開啟 Markdown 檔案'}
+        >
+          開啟 MD
+          <FileText className="w-4 h-4" />
+        </Button>
+
         <Select 
           icon={<Settings2 className="w-4 h-4" />}
           value={selectedSizeIndex}
@@ -119,9 +155,9 @@ export const EditorHeader: React.FC = () => {
           onClick={handleExportMarkdown}
           disabled={!hasContent}
           variant="secondary"
-          title={t('exportMD')}
+          title="儲存 Markdown"
         >
-          {t('exportMD')}
+          儲存 MD
           <FileText className="w-4 h-4" />
         </Button>
 

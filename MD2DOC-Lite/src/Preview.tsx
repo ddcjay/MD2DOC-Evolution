@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { parseInline } from './markdown';
 import type { InlineSegment, MarkdownBlock } from './types';
 
-type PageSizeKey = 'tech' | 'a4' | 'a5' | 'b5';
+type PageSizeKey = 'a4' | 'a5' | 'b5';
 
 type PreviewProps = {
   blocks: MarkdownBlock[];
